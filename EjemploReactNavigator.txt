@@ -1,0 +1,108 @@
+import * as React from 'react';
+import { Button, View } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+
+function Login({ navigation }) {
+  return (
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Button
+        title="Go to Login"
+        onPress={() => navigation.navigate('Signup')}
+      />
+    </View>
+  );
+}
+
+function Signup({ navigation }) {
+  return (
+    <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+      <Button
+        title="Go to Signup"
+        onPress={() => navigation.navigate('Login')}
+      />
+    </View>
+  );
+}
+
+const Stack = createStackNavigator();
+
+function MyStack() {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen name="Signup" component={Signup} />
+      <Stack.Screen name="Login" component={Login} />
+
+    </Stack.Navigator>
+  );
+}
+
+export default function App() {
+  return (
+    <NavigationContainer>
+      <MyStack />
+    </NavigationContainer>
+  );
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//------------------------APP-------------------------------------
+
+// import React, { Component } from 'react';
+// import { Router, Scene, Stack } from 'react-native-router-flux';
+
+
+import * as React from 'react';
+import { Button, View } from 'react-native';
+import 'react-native-gesture-handler';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
+
+// import Login from './pages/login/Login';
+// import Signup from './pages/signup/Signup';
+
+function Login({ navigation }) {
+    return (
+        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+            <Button
+                title="Go to Profile"
+                onPress={() => navigation.navigate('Profile')}
+            />
+        </View>
+    );
+}
+
+
+const Stack = createStackNavigator();
+
+function Routes() {
+    return (
+        <Stack.Navigator>
+            <Stack.Screen name="Home" component={Login} />
+            {/* <Stack.Screen name="Signup" component={Signup} /> */}
+        </Stack.Navigator>
+    );
+}
+
+export default function App() {
+    return (
+        <NavigationContainer>
+            <Routes />
+        </NavigationContainer>
+    );
+}
