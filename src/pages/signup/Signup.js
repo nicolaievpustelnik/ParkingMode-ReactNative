@@ -23,7 +23,7 @@ export default function Signup(props) {
     const createNewUser = async () => {
         if (state.firstName == "") {
 
-            alert('Please provide a first name');
+            alert('There is a blank field');
 
         } else {
 
