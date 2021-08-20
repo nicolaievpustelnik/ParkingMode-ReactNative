@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import MapView, { Marker } from 'react-native-maps';
+import MapView, { Callout, Marker } from 'react-native-maps';
 import { StyleSheet, View, Text, TextInput, TouchableOpacity, ScrollView, ActivityIndicator, Dimensions, Image } from 'react-native';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
 
@@ -11,20 +11,22 @@ export default function Registerparking(props) {
     const [state, setState] = useState({
         name: '',
         address: '',
-        latitude: '',
-        longitude: '',
         email: '',
         phone: '',
         mobil: '',
-        loader: false
+        loader: false,
+        coordinate: {
+            latitude: -34.6000000,
+            longitude: -58.4500000,
+        }
+
     })
 
     const handleChangeText = (name, value) => {
         setState({ ...state, [name]: value })
     }
 
-
-    const createNewUser = async () => {
+    const createNewParking = async () => {
         if (state.firstName == "") {
 
             alert('Please provide a first name');
@@ -38,8 +40,8 @@ export default function Registerparking(props) {
                 await firebase.db.collection('parking').add({
                     name: state.name,
                     address: state.address,
-                    latitude: parseFloat(state.latitude),
-                    longitude: parseFloat(state.longitude),
+                    latitude: parseFloat(region.coordinate.latitude),
+                    longitude: parseFloat(region.coordinate.longitude),
                     email: state.email,
                     phone: state.phone,
                     mobil: state.mobil,
@@ -59,8 +61,10 @@ export default function Registerparking(props) {
     }
 
     const [region, setRegion] = React.useState({
-        latitude: 0,
-        longitude: 0,
+        coordinate: {
+            latitude: 0,
+            longitude: 0,
+        },
     })
 
     return (
@@ -77,8 +81,10 @@ export default function Registerparking(props) {
                     // 'details' is provided when fetchDetails = true
                     console.log(data, details);
                     setRegion({
-                        latitude: details.geometry.location.lat,
-                        longitude: details.geometry.location.lng,
+                        coordinate: {
+                            latitude: details.geometry.location.lat,
+                            longitude: details.geometry.location.lng,
+                        },
                         latitudeDelta: 0.0922,
                         longitudeDelta: 0.0421,
                     })
@@ -96,18 +102,25 @@ export default function Registerparking(props) {
             <MapView
                 style={styles.map}
                 initialRegion={{
-                    latitude: -34.567965394759234,
-                    longitude: -58.447993457450465,
+                    latitude: state.coordinate.latitude,
+                    longitude: state.coordinate.longitude,
                     latitudeDelta: 0.0922,
                     longitudeDelta: 0.0421,
+                }}
+                showsUserLocation={true}
+                showsMyLocationButton={true}
+                onPress={(e) => {
+                    setRegion({ coordinate: e.nativeEvent.coordinate })
                 }}
             >
 
                 <Marker
                     coordinate={{
-                        latitude: region.latitude,
-                        longitude: region.longitude,
+                        latitude: region.coordinate.latitude,
+                        longitude: region.coordinate.longitude,
                     }}
+                    title="Your"
+                    description="ParkingMode"
                 >
 
                     <Image source={require('../../../../assets/img/logoMaps.png')} style={{ height: 70, width: 70 }} />
@@ -129,7 +142,7 @@ export default function Registerparking(props) {
                 <TextInput placeholder='Mobil' onChangeText={(value => handleChangeText('mobil', value))} style={styles.inputLogin} underlineColorAndroid='rgba(0,0,0,0)' placeholderTextColor='#000000' />
 
                 <TouchableOpacity style={styles.buttonLogin}>
-                    <Text style={styles.buttonText} onPress={() => createNewUser()}>Create</Text>
+                    <Text style={styles.buttonText} onPress={() => createNewParking()}>Create</Text>
                 </TouchableOpacity>
             </View> */}
 
