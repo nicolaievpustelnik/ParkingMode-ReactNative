@@ -58,63 +58,97 @@ export default function Registerparking(props) {
         }
     }
 
+    const [region, setRegion] = React.useState({
+        latitude: 0,
+        longitude: 0,
+    })
+
     return (
-        <ScrollView>
-            <View style={styles.container}>
-                {/* <Logosmall />
-                <ActivityIndicator size="large" color="#006ea8" animating={state.loader} /> */}
+        <View style={styles.container}>
 
-                <GooglePlacesAutocomplete
-                    style={styles.maps}
-                    placeholder='Search'
-                    onPress={(data, details = null) => {
-                        // 'details' is provided when fetchDetails = true
-                        console.log(data, details);
-                    }}
-                    query={{
-                        key: 'AIzaSyBimmpwxc9YHADwTa7NKQspu0kJPy49gHg',
-                        language: 'en',
-                    }}
-                />
-
-                <MapView
-                    style={styles.map}
-                    initialRegion={{
-                        latitude: -34.567965394759234,
-                        longitude: -58.447993457450465,
+            <GooglePlacesAutocomplete
+                style={styles.maps}
+                placeholder='Search'
+                fetchDetails={true}
+                GooglePlacesSearchQuery={{
+                    rankby: 'distance'
+                }}
+                onPress={(data, details = null) => {
+                    // 'details' is provided when fetchDetails = true
+                    console.log(data, details);
+                    setRegion({
+                        latitude: details.geometry.location.lat,
+                        longitude: details.geometry.location.lng,
                         latitudeDelta: 0.0922,
                         longitudeDelta: 0.0421,
+                    })
+                }}
+                query={{
+                    key: 'AIzaSyBimmpwxc9YHADwTa7NKQspu0kJPy49gHg',
+                    language: 'en',
+                    components: 'country:ar',
+                    types: 'establishment',
+                    radius: 30000,
+                    location: `${region.latitude},${region.longitude}`
+                }}
+            />
+
+            <MapView
+                style={styles.map}
+                initialRegion={{
+                    latitude: -34.567965394759234,
+                    longitude: -58.447993457450465,
+                    latitudeDelta: 0.0922,
+                    longitudeDelta: 0.0421,
+                }}
+            >
+
+                <Marker
+                    coordinate={{
+                        latitude: region.latitude,
+                        longitude: region.longitude,
                     }}
                 >
 
+                    <Image source={require('../../../../assets/img/logoMaps.png')} style={{ height: 70, width: 70 }} />
 
-                </MapView>
-
-                <View style={styles.blockLogin}>
-
-
-                    <TextInput placeholder='Name' onChangeText={(value => handleChangeText('name', value))} style={styles.inputLogin} underlineColorAndroid='rgba(0,0,0,0)' placeholderTextColor='#000000' />
-                    <TextInput placeholder='Address' onChangeText={(value => handleChangeText('address', value))} style={styles.inputLogin} underlineColorAndroid='rgba(0,0,0,0)' placeholderTextColor='#000000' />
-                    <TextInput placeholder='Email' onChangeText={(value => handleChangeText('email', value))} style={styles.inputLogin} underlineColorAndroid='rgba(0,0,0,0)' placeholderTextColor='#000000' />
-                    <TextInput placeholder='Latitude' onChangeText={(value => handleChangeText('latitude', value))} style={styles.inputLogin} underlineColorAndroid='rgba(0,0,0,0)' placeholderTextColor='#000000' />
-                    <TextInput placeholder='Longitude' onChangeText={(value => handleChangeText('longitude', value))} style={styles.inputLogin} underlineColorAndroid='rgba(0,0,0,0)' placeholderTextColor='#000000' />
-                    <TextInput placeholder='Phone' onChangeText={(value => handleChangeText('phone', value))} style={styles.inputLogin} underlineColorAndroid='rgba(0,0,0,0)' placeholderTextColor='#000000' />
-                    <TextInput placeholder='Mobil' onChangeText={(value => handleChangeText('mobil', value))} style={styles.inputLogin} underlineColorAndroid='rgba(0,0,0,0)' placeholderTextColor='#000000' />
-
-                    <TouchableOpacity style={styles.buttonLogin}>
-                        <Text style={styles.buttonText} onPress={() => createNewUser()}>Create</Text>
-                    </TouchableOpacity>
-                </View>
+                </Marker>
 
 
-            </View >
-        </ScrollView>
+            </MapView>
+
+            {/* <View style={styles.blockLogin}>
+
+
+                <TextInput placeholder='Name' onChangeText={(value => handleChangeText('name', value))} style={styles.inputLogin} underlineColorAndroid='rgba(0,0,0,0)' placeholderTextColor='#000000' />
+                <TextInput placeholder='Address' onChangeText={(value => handleChangeText('address', value))} style={styles.inputLogin} underlineColorAndroid='rgba(0,0,0,0)' placeholderTextColor='#000000' />
+                <TextInput placeholder='Email' onChangeText={(value => handleChangeText('email', value))} style={styles.inputLogin} underlineColorAndroid='rgba(0,0,0,0)' placeholderTextColor='#000000' />
+                <TextInput placeholder='Latitude' onChangeText={(value => handleChangeText('latitude', value))} style={styles.inputLogin} underlineColorAndroid='rgba(0,0,0,0)' placeholderTextColor='#000000' />
+                <TextInput placeholder='Longitude' onChangeText={(value => handleChangeText('longitude', value))} style={styles.inputLogin} underlineColorAndroid='rgba(0,0,0,0)' placeholderTextColor='#000000' />
+                <TextInput placeholder='Phone' onChangeText={(value => handleChangeText('phone', value))} style={styles.inputLogin} underlineColorAndroid='rgba(0,0,0,0)' placeholderTextColor='#000000' />
+                <TextInput placeholder='Mobil' onChangeText={(value => handleChangeText('mobil', value))} style={styles.inputLogin} underlineColorAndroid='rgba(0,0,0,0)' placeholderTextColor='#000000' />
+
+                <TouchableOpacity style={styles.buttonLogin}>
+                    <Text style={styles.buttonText} onPress={() => createNewUser()}>Create</Text>
+                </TouchableOpacity>
+            </View> */}
+
+
+        </View >
     );
 }
 
 const styles = StyleSheet.create({
+    maps: {
+        flex: 0,
+        position: 'absolute',
+        width: '100%',
+        zIndex: 1,
+        marginTop: 20,
+    },
     container: {
         flex: 1,
+        marginTop: 20,
     },
     blockLogin: {
         flex: 1,
@@ -171,8 +205,9 @@ const styles = StyleSheet.create({
         color: 'white',
     },
     map: {
-        width: Dimensions.get('window').width,
-        height: 400,
+        marginTop: 44,
+        width: Dimensions.get("window").width,
+        height: Dimensions.get("window").height,
     },
     iconMaps: {
         width: 10,
