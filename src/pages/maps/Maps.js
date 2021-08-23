@@ -47,7 +47,8 @@ export default function Maps(props) {
                                     latitude: parking.latitude,
                                     longitude: parking.longitude,
                                 }}
-                                description={parking.name}
+                                title={parking.name}
+                                description={parking.address}
                             >
 
                                 <Image source={require('../../../assets/img/logoMaps.png')} style={{ height: 70, width: 70 }} />

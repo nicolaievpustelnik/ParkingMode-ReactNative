@@ -15,11 +15,6 @@ export default function Registerparking(props) {
         phone: '',
         mobil: '',
         loader: false,
-        coordinate: {
-            latitude: -34.6000000,
-            longitude: -58.4500000,
-        }
-
     })
 
     const handleChangeText = (name, value) => {
@@ -40,8 +35,8 @@ export default function Registerparking(props) {
                 await firebase.db.collection('parking').add({
                     name: state.name,
                     address: state.address,
-                    latitude: parseFloat(region.coordinate.latitude),
-                    longitude: parseFloat(region.coordinate.longitude),
+                    latitude: parseFloat(props.latitude),
+                    longitude: parseFloat(props.longitude),
                     email: state.email,
                     phone: state.phone,
                     mobil: state.mobil,
@@ -60,91 +55,21 @@ export default function Registerparking(props) {
         }
     }
 
-    const [region, setRegion] = React.useState({
-        coordinate: {
-            latitude: 0,
-            longitude: 0,
-        },
-    })
-
     return (
         <View style={styles.container}>
 
-            <GooglePlacesAutocomplete
-                style={styles.maps}
-                placeholder='Search'
-                fetchDetails={true}
-                GooglePlacesSearchQuery={{
-                    rankby: 'distance'
-                }}
-                onPress={(data, details = null) => {
-                    // 'details' is provided when fetchDetails = true
-                    console.log(data, details);
-                    setRegion({
-                        coordinate: {
-                            latitude: details.geometry.location.lat,
-                            longitude: details.geometry.location.lng,
-                        },
-                        latitudeDelta: 0.0922,
-                        longitudeDelta: 0.0421,
-                    })
-                }}
-                query={{
-                    key: 'AIzaSyBimmpwxc9YHADwTa7NKQspu0kJPy49gHg',
-                    language: 'en',
-                    components: 'country:ar',
-                    types: 'establishment',
-                    radius: 30000,
-                    location: `${region.latitude},${region.longitude}`
-                }}
-            />
-
-            <MapView
-                style={styles.map}
-                initialRegion={{
-                    latitude: state.coordinate.latitude,
-                    longitude: state.coordinate.longitude,
-                    latitudeDelta: 0.0922,
-                    longitudeDelta: 0.0421,
-                }}
-                showsUserLocation={true}
-                showsMyLocationButton={true}
-                onPress={(e) => {
-                    setRegion({ coordinate: e.nativeEvent.coordinate })
-                }}
-            >
-
-                <Marker
-                    coordinate={{
-                        latitude: region.coordinate.latitude,
-                        longitude: region.coordinate.longitude,
-                    }}
-                    title="Your"
-                    description="ParkingMode"
-                >
-
-                    <Image source={require('../../../../assets/img/logoMaps.png')} style={{ height: 70, width: 70 }} />
-
-                </Marker>
-
-
-            </MapView>
-
-            {/* <View style={styles.blockLogin}>
-
-
+            <View style={styles.blockLogin}>
+                <Logosmall />
                 <TextInput placeholder='Name' onChangeText={(value => handleChangeText('name', value))} style={styles.inputLogin} underlineColorAndroid='rgba(0,0,0,0)' placeholderTextColor='#000000' />
                 <TextInput placeholder='Address' onChangeText={(value => handleChangeText('address', value))} style={styles.inputLogin} underlineColorAndroid='rgba(0,0,0,0)' placeholderTextColor='#000000' />
                 <TextInput placeholder='Email' onChangeText={(value => handleChangeText('email', value))} style={styles.inputLogin} underlineColorAndroid='rgba(0,0,0,0)' placeholderTextColor='#000000' />
-                <TextInput placeholder='Latitude' onChangeText={(value => handleChangeText('latitude', value))} style={styles.inputLogin} underlineColorAndroid='rgba(0,0,0,0)' placeholderTextColor='#000000' />
-                <TextInput placeholder='Longitude' onChangeText={(value => handleChangeText('longitude', value))} style={styles.inputLogin} underlineColorAndroid='rgba(0,0,0,0)' placeholderTextColor='#000000' />
                 <TextInput placeholder='Phone' onChangeText={(value => handleChangeText('phone', value))} style={styles.inputLogin} underlineColorAndroid='rgba(0,0,0,0)' placeholderTextColor='#000000' />
                 <TextInput placeholder='Mobil' onChangeText={(value => handleChangeText('mobil', value))} style={styles.inputLogin} underlineColorAndroid='rgba(0,0,0,0)' placeholderTextColor='#000000' />
 
                 <TouchableOpacity style={styles.buttonLogin}>
                     <Text style={styles.buttonText} onPress={() => createNewParking()}>Create</Text>
                 </TouchableOpacity>
-            </View> */}
+            </View>
 
 
         </View >
