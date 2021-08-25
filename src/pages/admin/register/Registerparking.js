@@ -14,6 +14,8 @@ export default function Registerparking(props) {
         email: '',
         phone: '',
         mobil: '',
+        rating: 2.5,
+        votes: 0,
         loader: false,
     })
 
@@ -40,6 +42,8 @@ export default function Registerparking(props) {
                     email: state.email,
                     phone: state.phone,
                     mobil: state.mobil,
+                    rating: state.rating,
+                    votes: state.votes
                 });
 
                 setTimeout(() => {

@@ -1,12 +1,24 @@
 import React, { useEffect, useState } from 'react';
-import MapView, { Marker } from 'react-native-maps';
+import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import { StyleSheet, View, Dimensions, Image, ScrollView, TouchableOpacity, Text, TextInput, Animated } from 'react-native';
 import firebase from '../../../database/firebase';
 import StarRating from 'react-native-star-rating';
 
+const { width, height } = Dimensions.get("window");
+const CARD_HEIGHT = 220;
+const CARD_WIDTH = width * 0.8;
+const SPACING_FOR_CARD_INSET = width * 0.1 - 10;
+
 export default function Maps(props) {
 
     const [parkings, setParking] = useState([])
+
+    const [region, setRegion] = React.useState({
+        latitude: -34.567965394759234,
+        longitude: -58.447993457450465,
+        latitudeDelta: 0.0922,
+        longitudeDelta: 0.0421,
+    })
 
     useEffect(() => {
         firebase.db.collection('parking').onSnapshot(querySnapshot => {
@@ -15,10 +27,10 @@ export default function Maps(props) {
 
             querySnapshot.docs.forEach(doc => {
 
-                const { name, address, latitude, longitude, email, phone, mobil } = doc.data();
+                const { name, address, latitude, longitude, email, phone, mobil, rating, votes } = doc.data();
 
                 parkings.push({
-                    id: doc.id, name, address, latitude, longitude, email, phone, mobil
+                    id: doc.id, name, address, latitude, longitude, email, phone, mobil, rating, votes
                 });
             });
 
@@ -36,34 +48,99 @@ export default function Maps(props) {
         starCount: 3.5
     })
 
+    let mapIndex = 0;
+    let mapAnimation = new Animated.Value(0);
+
+    useEffect(() => {
+        mapAnimation.addListener(({ value }) => {
+            let index = Math.floor(value / CARD_WIDTH + 0.3); // animate 30% away from landing on the next item
+            if (index >= parkings.length) {
+                index = parkings.length - 1;
+            }
+            if (index <= 0) {
+                index = 0;
+            }
+
+            clearTimeout(regionTimeout);
+
+            const regionTimeout = setTimeout(() => {
+                if (mapIndex !== index) {
+                    mapIndex = index;
+
+                    _map.current.animateToRegion(
+                        {
+                            latitude: parkings[index].latitude,
+                            longitude: parkings[index].longitude,
+                            latitudeDelta: region.latitudeDelta,
+                            longitudeDelta: region.longitudeDelta,
+                        },
+                        350
+                    );
+                }
+            }, 10);
+        });
+    });
+
+    const interpolations = parkings.map((parking, index) => {
+        const inputRange = [
+            (index - 1) * CARD_WIDTH,
+            index * CARD_WIDTH,
+            ((index + 1) * CARD_WIDTH),
+        ];
+
+        const scale = mapAnimation.interpolate({
+            inputRange,
+            outputRange: [0.8, 1.2, 0.8],
+            extrapolate: "clamp"
+        });
+
+        return { scale };
+    });
+
+    const onMarkerPress = (mapEventData) => {
+        const markerID = mapEventData._targetInst.return.key;
+
+        let x = (markerID * CARD_WIDTH) + (markerID * 20);
+
+        _scrollView.current.scrollTo({ x: x, y: 0, animated: true });
+    }
+
+    const _map = React.useRef(null);
+    const _scrollView = React.useRef(null);
+
     return (
         <View style={styles.container}>
             <MapView
+                ref={_map}
+                initialRegion={region}
+                provider={PROVIDER_GOOGLE}
                 style={styles.map}
-                initialRegion={{
-                    latitude: -34.567965394759234,
-                    longitude: -58.447993457450465,
-                    latitudeDelta: 0.0922,
-                    longitudeDelta: 0.0421,
-                }}
             >
 
                 {
-                    parkings.map(parking => {
+                    parkings.map((parking, index) => {
+                        const scaleStyle = {
+                            transform: [
+                                {
+                                    scale: interpolations[index].scale,
+                                },
+                            ],
+                        };
                         return (
-                            <Marker
-                                key={parking.id}
+                            <MapView.Marker
+                                key={index}
                                 coordinate={{
                                     latitude: parking.latitude,
                                     longitude: parking.longitude,
                                 }}
                                 title={parking.name}
                                 description={parking.address}
+                                onPress={(e) => onMarkerPress(e)}
                             >
 
-                                <Image source={require('../../../assets/img/logoMaps.png')} style={{ height: 70, width: 70 }} />
+                                <Animated.Image source={require('../../../assets/img/logoMaps.png')} style={[styles.marker, scaleStyle]} />
 
-                            </Marker>
+                            </MapView.Marker>
                         )
                     })
                 }
@@ -117,15 +194,41 @@ export default function Maps(props) {
             </ScrollView>
 
             <Animated.ScrollView
-                horizontal={true}
+                ref={_scrollView}
+                horizontal
+                pagingEnabled
                 scrollEventThrottle={1}
                 showsHorizontalScrollIndicator={false}
+                snapToInterval={CARD_WIDTH + 20}
+                snapToAlignment='center'
                 style={styles.animatedScrollView}
+                contentInset={{
+                    top: 0,
+                    left: SPACING_FOR_CARD_INSET,
+                    bottom: 0,
+                    right: SPACING_FOR_CARD_INSET,
+                }}
+                contentContainerStyle={{
+                    paddingHorizontal: SPACING_FOR_CARD_INSET
+                }}
+                onScroll={Animated.event(
+                    [
+                        {
+                            nativeEvent: {
+                                contentOffset: {
+                                    x: mapAnimation,
+                                }
+                            },
+                        },
+                    ],
+                    { useNativeDriver: true }
+
+                )}
             >
                 {
-                    parkings.map(parking => {
+                    parkings.map((parking, index) => {
                         return (
-                            <View style={styles.card} key={parking.id}>
+                            <View style={styles.card} key={index}>
                                 <Image
                                     source={require('../../../assets/img/logo5.png')}
                                     style={styles.imgCard}
@@ -138,12 +241,12 @@ export default function Maps(props) {
                                             disabled={false}
                                             maxStars={5}
                                             starSize={14}
-                                            rating={constructor.starCount}
+                                            rating={parking.rating}
                                         // selectedStar={(rating) => onStarRatingPress({
                                         //     starCount: rating,
                                         // })}
                                         />
-                                        <Text style={styles.textStart}>(99)</Text>
+                                        <Text style={styles.textStart}>({parking.votes})</Text>
                                     </View>
                                     <Text numberOfLines={1} style={styles.cardDescription}>{parking.address}</Text>
 
@@ -182,6 +285,10 @@ const styles = StyleSheet.create({
     map: {
         width: Dimensions.get('window').width,
         height: Dimensions.get('window').height,
+    },
+    marker: {
+        height: 55,
+        width: 45
     },
     iconMaps: {
         width: 10,
@@ -246,8 +353,8 @@ const styles = StyleSheet.create({
         shadowRadius: 5,
         shadowOpacity: 0.3,
         shadowOffset: { x: 2, y: -2 },
-        height: 220,
-        width: 250,
+        height: CARD_HEIGHT,
+        width: CARD_WIDTH,
         overflow: "hidden",
     },
     animatedScrollView: {
