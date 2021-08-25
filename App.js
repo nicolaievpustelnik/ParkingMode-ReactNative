@@ -66,20 +66,14 @@ function MyStack() {
       {/* <Stack.Screen name="Test" component={Test} /> */}
       {/* <Stack.Screen name="Login" component={Login} />
       <Stack.Screen name="Signup" component={Signup} /> */}
-      <Stack.Screen name="Select Parking" component={Registerparkingmaps} />
-      <Stack.Screen name="Create Parking" component={Registerparking} />
+      {/* <Stack.Screen name="Select Parking" component={Registerparkingmaps} />
+      <Stack.Screen name="Create Parking" component={Registerparking} /> */}
 
       <Stack.Screen name="Maps" component={Maps} />
 
     </Stack.Navigator>
   );
 }
-
-/*
-Example 
--34.57300397055752
--58.44541425296715
-*/
 
 export default function App() {
   return (

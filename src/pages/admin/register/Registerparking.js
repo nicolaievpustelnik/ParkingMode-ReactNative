@@ -151,6 +151,15 @@ const styles = StyleSheet.create({
         width: 10,
         height: 20,
     },
+    textBlock: {
+        color: 'white',
+
+    },
+    block: {
+        position: 'absolute',
+        top: 80,
+        paddingHorizontal: 10
+    }
 });
 
 

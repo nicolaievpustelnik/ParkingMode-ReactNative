@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import MapView, { Marker } from 'react-native-maps';
-import { StyleSheet, View, Dimensions, Image } from 'react-native';
+import { StyleSheet, View, Dimensions, Image, ScrollView, TouchableOpacity, Text, TextInput, Animated } from 'react-native';
 import firebase from '../../../database/firebase';
+import StarRating from 'react-native-star-rating';
 
 export default function Maps(props) {
 
@@ -25,6 +26,15 @@ export default function Maps(props) {
 
         });
     }, []);
+
+
+    const handleChangeText = (name, value) => {
+        setState({ ...state, [name]: value })
+    }
+
+    const [constructor, onStarRatingPress] = React.useState({
+        starCount: 3.5
+    })
 
     return (
         <View style={styles.container}>
@@ -59,16 +69,115 @@ export default function Maps(props) {
                 }
 
             </MapView>
+
+            <View style={styles.searchBox}>
+                <TextInput
+                    placeholder="Search here"
+                    placeholderTextColor="#000"
+                    autoCapitalize="none"
+                    style={{ flex: 1, padding: 0 }}
+                />
+                <Image source={require('../../../assets/icon/search.png')} style={styles.iconSearch} />
+            </View>
+
+            <ScrollView
+                horizontal={true}
+                scrollEventThrottle={1}
+                showsHorizontalScrollIndicator={false}
+                height={40}
+                style={styles.block}
+                contentContainerStyle={{
+                    paddingRight: 20
+                }}
+            >
+                <TouchableOpacity style={styles.blockForChild}>
+                    <Image source={require('../../../assets/icon/car.png')} style={styles.chipsIcon} />
+                    <Text style={styles.textBlock}>Car</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.blockForChild}>
+                    <Image source={require('../../../assets/icon/motorcycle.png')} style={styles.chipsIcon} />
+                    <Text style={styles.textBlock}>Motorcycle</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.blockForChild}>
+                    <Image source={require('../../../assets/icon/bike.png')} style={styles.chipsIcon} />
+                    <Text style={styles.textBlock}>Bike</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.blockForChild}>
+                    <Image source={require('../../../assets/icon/truck.png')} style={styles.chipsIcon} />
+                    <Text style={styles.textBlock}>Truck</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.blockForChild}>
+                    <Image source={require('../../../assets/icon/hour.png')} style={styles.chipsIcon} />
+                    <Text style={styles.textBlock}>Hour</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.blockForChild}>
+                    <Image source={require('../../../assets/icon/rental.png')} style={styles.chipsIcon} />
+                    <Text style={styles.textBlock}>Rental</Text>
+                </TouchableOpacity>
+            </ScrollView>
+
+            <Animated.ScrollView
+                horizontal={true}
+                scrollEventThrottle={1}
+                showsHorizontalScrollIndicator={false}
+                style={styles.animatedScrollView}
+            >
+                {
+                    parkings.map(parking => {
+                        return (
+                            <View style={styles.card} key={parking.id}>
+                                <Image
+                                    source={require('../../../assets/img/logo5.png')}
+                                    style={styles.imgCard}
+                                    resizeMode="cover"
+                                />
+                                <View style={styles.textContent}>
+                                    <Text numberOfLines={1} style={styles.cardTitle}>{parking.name}</Text>
+                                    <View style={styles.startBlock}>
+                                        <StarRating
+                                            disabled={false}
+                                            maxStars={5}
+                                            starSize={14}
+                                            rating={constructor.starCount}
+                                        // selectedStar={(rating) => onStarRatingPress({
+                                        //     starCount: rating,
+                                        // })}
+                                        />
+                                        <Text style={styles.textStart}>(99)</Text>
+                                    </View>
+                                    <Text numberOfLines={1} style={styles.cardDescription}>{parking.address}</Text>
+
+                                    <View style={styles.button}>
+                                        <TouchableOpacity
+                                            onPress={() => { }}
+                                            style={[styles.signIn, {
+                                                borderColor: '#449ad8',
+                                                borderWidth: 1
+                                            }]}
+                                        >
+                                            <Text style={[styles.textSign, {
+                                                color: '#449ad8'
+                                            }]}>Park</Text>
+                                        </TouchableOpacity>
+                                    </View>
+
+                                </View>
+                            </View>
+                        )
+                    })
+                }
+
+
+            </Animated.ScrollView>
+
         </View>
+
     );
 }
 
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff',
-        alignItems: 'center',
-        justifyContent: 'center',
     },
     map: {
         width: Dimensions.get('window').width,
@@ -78,4 +187,118 @@ const styles = StyleSheet.create({
         width: 10,
         height: 20,
     },
+    textBlock: {
+        color: 'black',
+    },
+    block: {
+        position: 'absolute',
+        top: 65,
+        paddingHorizontal: 10
+    },
+    blockForChild: {
+        flexDirection: "row",
+        backgroundColor: '#fff',
+        borderRadius: 20,
+        paddingHorizontal: 20,
+        marginHorizontal: 10,
+        height: 35,
+        shadowColor: '#ccc',
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.5,
+        shadowRadius: 5,
+        elevation: 10,
+        padding: 8,
+    },
+    chipsIcon: {
+        width: 26,
+        height: 26,
+        marginRight: 5,
+        marginTop: -3
+    },
+    searchBox: {
+        position: 'absolute',
+        marginTop: 10,
+        flexDirection: "row",
+        backgroundColor: '#fff',
+        width: '95%',
+        alignSelf: 'center',
+        borderRadius: 5,
+        padding: 10,
+        shadowColor: '#ccc',
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.5,
+        shadowRadius: 5,
+        elevation: 10,
+    },
+    iconSearch: {
+        width: 20,
+        height: 20,
+        marginTop: 5
+    },
+    card: {
+        // padding: 10,
+        elevation: 2,
+        backgroundColor: "#FFF",
+        borderTopLeftRadius: 5,
+        borderTopRightRadius: 5,
+        marginHorizontal: 10,
+        shadowColor: "#000",
+        shadowRadius: 5,
+        shadowOpacity: 0.3,
+        shadowOffset: { x: 2, y: -2 },
+        height: 220,
+        width: 250,
+        overflow: "hidden",
+    },
+    animatedScrollView: {
+        position: "absolute",
+        bottom: 0,
+        left: 0,
+        right: 0,
+        paddingVertical: 10,
+    },
+    imgCard: {
+        flex: 3,
+        width: "100%",
+        height: "100%",
+        alignSelf: "center",
+    },
+    textContent: {
+        flex: 2,
+        padding: 10,
+    },
+    cardTitle: {
+        fontSize: 12,
+        // marginTop: 5,
+        fontWeight: "bold",
+    },
+    cardDescription: {
+        fontSize: 12,
+        color: "#444",
+    },
+    startBlock: {
+        width: '100%',
+        flexDirection: "row",
+    },
+    textStart: {
+        marginLeft: 5,
+        fontSize: 12,
+        color: "#444",
+        marginTop: -1
+    },
+    button: {
+        alignItems: 'center',
+        marginTop: 5
+    },
+    signIn: {
+        width: '100%',
+        padding: 5,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 3
+    },
+    textSign: {
+        fontSize: 14,
+        fontWeight: 'bold'
+    }
 });
