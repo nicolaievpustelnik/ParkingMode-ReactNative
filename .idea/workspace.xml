@@ -13,11 +13,7 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="dc5c6b84-1f92-4b26-9bbd-b9134efea109" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/admin/register/Registerparking.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/admin/register/Registerparking.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/maps/Maps.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/maps/Maps.js" afterDir="false" />
-    </list>
+    <list default="true" id="dc5c6b84-1f92-4b26-9bbd-b9134efea109" name="Default Changelist" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
