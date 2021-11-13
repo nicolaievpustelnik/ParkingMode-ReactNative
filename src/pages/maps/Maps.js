@@ -250,17 +250,19 @@ export default function Maps(props) {
                                     </View>
                                     <Text numberOfLines={1} style={styles.cardDescription}>{parking.address}</Text>
 
-                                    <View style={styles.button}>
+                                    <View style={styles.button} >
                                         <TouchableOpacity
-                                            onPress={() => { }}
+                                            onPress={() => props.root.navigate('Parking')}
                                             style={[styles.signIn, {
                                                 borderColor: '#449ad8',
                                                 borderWidth: 1
                                             }]}
                                         >
-                                            <Text style={[styles.textSign, {
-                                                color: '#449ad8'
-                                            }]}>Park</Text>
+                                            <Text style={[styles.textSign, { color: '#449ad8' }]}>
+
+                                                Park
+                                            </Text>
+
                                         </TouchableOpacity>
                                     </View>
 

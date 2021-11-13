@@ -9,6 +9,7 @@ import Signup1 from './src/pages/signup/Signup';
 import Maps1 from './src/pages/maps/Maps';
 import Registerparking1 from './src/pages/admin/register/Registerparking';
 import Registerparkingmaps1 from './src/pages/admin/register/Registerparkingmaps';
+import Parking1 from './src/pages/park/Parking';
 
 function Login({ navigation }) {
   return (
@@ -58,18 +59,28 @@ function Registerparkingmaps({ navigation }) {
   );
 }
 
+function Parking({ navigation }) {
+  return (
+    <View style={styles.container}>
+      <StatusBar backgroundColor='#006ea8' barStyle="light-content" />
+      <Parking1 root={navigation} />
+    </View>
+  );
+}
+
 const Stack = createStackNavigator();
 
 function MyStack() {
   return (
     <Stack.Navigator>
       {/* <Stack.Screen name="Test" component={Test} /> */}
-      {/* <Stack.Screen name="Login" component={Login} />
-      <Stack.Screen name="Signup" component={Signup} /> */}
-      <Stack.Screen name="Select Parking" component={Registerparkingmaps} />
-      <Stack.Screen name="Create Parking" component={Registerparking} />
+      <Stack.Screen name="Login" component={Login} />
+      <Stack.Screen name="Signup" component={Signup} />
+      {/* <Stack.Screen name="Select Parking" component={Registerparkingmaps} />
+      <Stack.Screen name="Create Parking" component={Registerparking} /> */}
 
-      <Stack.Screen name="Maps" component={Maps} />
+      {/* <Stack.Screen name="Maps" component={Maps} />
+      <Stack.Screen name="Parking" component={Parking} /> */}
 
     </Stack.Navigator>
   );

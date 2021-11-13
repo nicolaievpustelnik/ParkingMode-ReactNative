@@ -1,5 +1,6 @@
 import React from 'react';
 import { StyleSheet, View, Image } from 'react-native';
+import { useFonts, Inter_900Black } from '@expo-google-fonts/inter';
 
 export default function Logosmall() {
     return (
