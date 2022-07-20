@@ -13,7 +13,8 @@ const SPACING_FOR_CARD_INSET = width * 0.1 - 10;
 
 export default function Maps(props) {
 
-    const [parkings, setParking] = useState([])
+    const [parkings, setParking] = useState([]);
+    const [loadParkingsByItemClick, setLoadParkingsByItemClick] = useState([]);
 
     const [region, setRegion] = React.useState({
         latitude: -34.567965394759234,
@@ -68,8 +69,8 @@ export default function Maps(props) {
             });
 
             setParking(parkings);
-
         });
+
     }, []);
 
     const handleChangeText = (name, value) => {
@@ -130,7 +131,13 @@ export default function Maps(props) {
     });
 
     const onMarkerPress = (mapEventData) => {
-        const markerID = mapEventData._targetInst.return.key;
+
+        let markerID = 0;
+
+        if (mapEventData) {
+
+            markerID = mapEventData._targetInst.return.key;
+        }
 
         let x = (markerID * CARD_WIDTH) + (markerID * 20);
 
@@ -147,6 +154,148 @@ export default function Maps(props) {
     const [clickButtonHour, setClickHour] = useState(true);
     const [clickButtonRental, setClickRental] = useState(true);
 
+    const loadParkingsItems = (parking, index) => {
+
+        const nameParking = parking.name.charAt(0).toUpperCase() + parking.name.slice(1);
+
+        return (
+            <View style={styles.card} key={index}>
+                <Image
+                    source={require('../../../assets/img/logo5.png')}
+                    style={styles.imgCard}
+                    resizeMode="cover"
+                />
+
+                <View style={styles.textContent}>
+                    <Text numberOfLines={1} style={styles.cardTitle}>{nameParking}</Text>
+                    <View style={styles.blockStartAndIconType}>
+                        <View>
+                            <View style={styles.startBlock}>
+                                <StarRating
+                                    disabled={false}
+                                    maxStars={5}
+                                    starSize={14}
+                                    rating={parking.rating}
+                                // selectedStar={(rating) => onStarRatingPress({
+                                // starCount: rating,
+                                // })}
+                                />
+                                <Text style={styles.textStart}>({parking.votes})</Text>
+                            </View>
+                        </View>
+                        <View style={styles.blockIconTypeParking}>
+                            <View style={styles.iconType}>
+                                {parking.typeParkingCar ?
+                                    (
+                                        <Image source={require('../../../assets/icon/car.png')} style={styles.chipsIcon} />
+                                    ) :
+                                    (
+                                        null
+                                    )
+                                }
+                            </View>
+                            <View style={styles.iconType}>
+                                {parking.typeParkingMotorcycle ?
+                                    (
+                                        <Image source={require('../../../assets/icon/motorcycle.png')} style={styles.chipsIcon} />
+                                    ) :
+                                    (
+                                        null
+                                    )
+                                }
+                            </View>
+                            <View style={styles.iconType}>
+                                {parking.typeParkingBike ?
+                                    (
+                                        <Image source={require('../../../assets/icon/bike.png')} style={styles.chipsIcon} />
+                                    ) :
+                                    (
+                                        null
+                                    )
+                                }
+                            </View>
+                            <View style={styles.iconType}>
+                                {parking.typeParkingTruck ?
+                                    (
+                                        <Image source={require('../../../assets/icon/truck.png')} style={styles.chipsIcon} />
+                                    ) :
+                                    (
+                                        null
+                                    )
+                                }
+                            </View>
+                            <View style={styles.iconType}>
+                                {parking.typeParkingHour ?
+                                    (
+                                        <Image source={require('../../../assets/icon/hour.png')} style={styles.chipsIcon} />
+                                    ) :
+                                    (
+                                        null
+                                    )
+                                }
+                            </View>
+                            <View style={styles.iconType}>
+                                {parking.typeParkingRental ?
+                                    (
+                                        <Image source={require('../../../assets/icon/rental.png')} style={styles.chipsIcon} />
+                                    ) :
+                                    (
+                                        null
+                                    )
+                                }
+                            </View>
+                        </View>
+                    </View>
+
+                    <Text numberOfLines={1} style={styles.cardDescription}>{parking.address}</Text>
+
+                    <View style={styles.button} >
+                        <TouchableOpacity
+                            onPress={() => props.root.navigate('Parking', { parking, latitudeUser, longitudeUser })}
+                            style={[styles.signIn, {
+                                borderColor: '#449ad8',
+                                borderWidth: 1
+                            }]}
+                        >
+                            <Text style={[styles.textSign, { color: '#449ad8' }]}>
+                                Park
+                            </Text>
+
+                        </TouchableOpacity>
+                    </View>
+
+                </View>
+            </View>
+        )
+    }
+
+    const loadIconItems = (parking, index) => {
+
+        const scaleStyle = {
+            transform: [
+                {
+                    scale: interpolations[index].scale,
+                },
+            ],
+        };
+
+        return (
+            <MapView.Marker
+                key={index}
+                coordinate={{
+                    latitude: parking.latitude,
+                    longitude: parking.longitude,
+                }}
+                title={parking.name}
+                description={parking.address}
+                onPress={(e) => onMarkerPress(e)}
+            >
+
+                <Animated.Image source={require('../../../assets/img/logoMaps.png')} style={[styles.marker, scaleStyle]} />
+
+            </MapView.Marker>
+        )
+    }
 
     return (
         <View style={styles.container}>
@@ -159,29 +308,38 @@ export default function Maps(props) {
 
                 {
                     parkings.map((parking, index) => {
-                        const scaleStyle = {
-                            transform: [
-                                {
-                                    scale: interpolations[index].scale,
-                                },
-                            ],
-                        };
-                        return (
-                            <MapView.Marker
-                                key={index}
-                                coordinate={{
-                                    latitude: parking.latitude,
-                                    longitude: parking.longitude,
-                                }}
-                                title={parking.name}
-                                description={parking.address}
-                                onPress={(e) => onMarkerPress(e)}
-                            >
 
-                                <Animated.Image source={require('../../../assets/img/logoMaps.png')} style={[styles.marker, scaleStyle]} />
+                        if (!clickButtonCar || !clickButtonMotorcycle || !clickButtonBike || !clickButtonTruck || !clickButtonHour || !clickButtonRental) {
 
-                            </MapView.Marker>
-                        )
+                            if (!clickButtonCar && parking.typeParkingCar) {
+                                return loadIconItems(parking, index)
+                            }
+
+                            if (!clickButtonMotorcycle && parking.typeParkingMotorcycle) {
+                                return loadIconItems(parking, index)
+                            }
+
+                            if (!clickButtonBike && parking.typeParkingBike) {
+                                return loadIconItems(parking, index)
+                            }
+
+                            if (!clickButtonTruck && parking.typeParkingTruck) {
+                                return loadIconItems(parking, index)
+                            }
+
+                            if (!clickButtonHour && parking.typeParkingHour) {
+                                return loadIconItems(parking, index)
+                            }
+
+                            if (!clickButtonRental && parking.typeParkingRental) {
+                                return loadIconItems(parking, index)
+                            }
+
+                        } else {
+
+                            return loadIconItems(parking, index)
+                        }
+
                     })
                 }
 
@@ -330,124 +488,45 @@ export default function Maps(props) {
                 {
                     parkings.map((parking, index) => {
 
-                        const nameParking = parking.name.charAt(0).toUpperCase() + parking.name.slice(1);
+                        if (!clickButtonCar || !clickButtonMotorcycle || !clickButtonBike || !clickButtonTruck || !clickButtonHour || !clickButtonRental) {
 
-                        return (
-                            <View style={styles.card} key={index}>
-                                <Image
-                                    source={require('../../../assets/img/logo5.png')}
-                                    style={styles.imgCard}
-                                    resizeMode="cover"
-                                />
+                            onMarkerPress();
 
-                                <View style={styles.textContent}>
-                                    <Text numberOfLines={1} style={styles.cardTitle}>{nameParking}</Text>
-                                    <View style={styles.blockStartAndIconType}>
-                                        <View>
-                                            <View style={styles.startBlock}>
-                                                <StarRating
-                                                    disabled={false}
-                                                    maxStars={5}
-                                                    starSize={14}
-                                                    rating={parking.rating}
-                                                // selectedStar={(rating) => onStarRatingPress({
-                                                // starCount: rating,
-                                                // })}
-                                                />
-                                                <Text style={styles.textStart}>({parking.votes})</Text>
-                                            </View>
-                                        </View>
-                                        <View style={styles.blockIconTypeParking}>
-                                            <View style={styles.iconType}>
-                                                {parking.typeParkingCar ?
-                                                    (
-                                                        <Image source={require('../../../assets/icon/car.png')} style={styles.chipsIcon} />
-                                                    ) :
-                                                    (
-                                                        null
-                                                    )
-                                                }
-                                            </View>
-                                            <View style={styles.iconType}>
-                                                {parking.typeParkingMotorcycle ?
-                                                    (
-                                                        <Image source={require('../../../assets/icon/motorcycle.png')} style={styles.chipsIcon} />
-                                                    ) :
-                                                    (
-                                                        null
-                                                    )
-                                                }
-                                            </View>
-                                            <View style={styles.iconType}>
-                                                {parking.typeParkingBike ?
-                                                    (
-                                                        <Image source={require('../../../assets/icon/bike.png')} style={styles.chipsIcon} />
-                                                    ) :
-                                                    (
-                                                        null
-                                                    )
-                                                }
-                                            </View>
-                                            <View style={styles.iconType}>
-                                                {parking.typeParkingTruck ?
-                                                    (
-                                                        <Image source={require('../../../assets/icon/truck.png')} style={styles.chipsIcon} />
-                                                    ) :
-                                                    (
-                                                        null
-                                                    )
-                                                }
-                                            </View>
-                                            <View style={styles.iconType}>
-                                                {parking.typeParkingHour ?
-                                                    (
-                                                        <Image source={require('../../../assets/icon/hour.png')} style={styles.chipsIcon} />
-                                                    ) :
-                                                    (
-                                                        null
-                                                    )
-                                                }
-                                            </View>
-                                            <View style={styles.iconType}>
-                                                {parking.typeParkingRental ?
-                                                    (
-                                                        <Image source={require('../../../assets/icon/rental.png')} style={styles.chipsIcon} />
-                                                    ) :
-                                                    (
-                                                        null
-                                                    )
-                                                }
-                                            </View>
-                                        </View>
-                                    </View>
+                            if (!clickButtonCar && parking.typeParkingCar) {
+                                return loadParkingsItems(parking, index)
+                            }
 
-                                    <Text numberOfLines={1} style={styles.cardDescription}>{parking.address}</Text>
+                            if (!clickButtonMotorcycle && parking.typeParkingMotorcycle) {
+                                return loadParkingsItems(parking, index)
+                            }
 
-                                    <View style={styles.button} >
-                                        <TouchableOpacity
-                                            onPress={() => props.root.navigate('Parking', { parking, latitudeUser, longitudeUser })}
-                                            style={[styles.signIn, {
-                                                borderColor: '#449ad8',
-                                                borderWidth: 1
-                                            }]}
-                                        >
-                                            <Text style={[styles.textSign, { color: '#449ad8' }]}>
-                                                Park
-                                            </Text>
+                            if (!clickButtonBike && parking.typeParkingBike) {
+                                return loadParkingsItems(parking, index)
+                            }
 
-                                        </TouchableOpacity>
-                                    </View>
+                            if (!clickButtonTruck && parking.typeParkingTruck) {
+                                return loadParkingsItems(parking, index)
+                            }
 
-                                </View>
-                            </View>
-                        )
+                            if (!clickButtonHour && parking.typeParkingHour) {
+                                return loadParkingsItems(parking, index)
+                            }
+
+                            if (!clickButtonRental && parking.typeParkingRental) {
+                                return loadParkingsItems(parking, index)
+                            }
+
+                        } else {
+
+                            return loadParkingsItems(parking, index)
+                        }
                     })
                 }
 
 
             </Animated.ScrollView>
 
-        </View>
+        </View >
 
     );
 }
