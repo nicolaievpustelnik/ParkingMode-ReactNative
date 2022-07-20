@@ -1,11 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, setState } from 'react';
 import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
-import { StyleSheet, View, Dimensions, Image, ScrollView, TouchableOpacity, Text, TextInput, Animated } from 'react-native';
+import { StyleSheet, View, Dimensions, Image, ScrollView, TouchableOpacity, Text, TextInput, Animated, Platform } from 'react-native';
 import firebase from '../../../database/firebase';
 import StarRating from 'react-native-star-rating';
+import Constants from 'expo-constants';
+import * as Location from 'expo-location';
 
 const { width, height } = Dimensions.get("window");
-const CARD_HEIGHT = 220;
+const CARD_HEIGHT = 275;
 const CARD_WIDTH = width * 0.8;
 const SPACING_FOR_CARD_INSET = width * 0.1 - 10;
 
@@ -20,17 +22,48 @@ export default function Maps(props) {
         longitudeDelta: 0.0421,
     })
 
+    const [location, setLocation] = useState(null);
+    const [errorMsg, setErrorMsg] = useState(null);
+
+    useEffect(() => {
+        (async () => {
+            if (Platform.OS === 'android' && !Constants.isDevice) {
+                setErrorMsg(
+                    'Oops, this will not work on Snack in an Android emulator. Try it on your device!'
+                );
+                return;
+            }
+            let { status } = await Location.requestForegroundPermissionsAsync();
+            if (status !== 'granted') {
+                setErrorMsg('Permission to access location was denied');
+                return;
+            }
+
+            let location = await Location.getCurrentPositionAsync({});
+            setLocation(location);
+        })();
+    }, []);
+
+    let latitudeUser = 'Waiting..';
+    let longitudeUser = 'Waiting..';
+    if (errorMsg) {
+        latitudeUser = errorMsg;
+        longitudeUser = errorMsg;
+    } else if (location) {
+        latitudeUser = parseFloat(JSON.stringify(location.coords.latitude));
+        longitudeUser = parseFloat(JSON.stringify(location.coords.longitude));
+    }
+
     useEffect(() => {
         firebase.db.collection('parking').onSnapshot(querySnapshot => {
 
             const parkings = [];
 
             querySnapshot.docs.forEach(doc => {
-
-                const { name, address, latitude, longitude, email, phone, mobil, rating, votes } = doc.data();
+                const { name, address, latitude, longitude, email, phone, mobil, rating, votes, typeParkingCar, typeParkingMotorcycle, typeParkingBike, typeParkingTruck, typeParkingHour, typeParkingRental } = doc.data();
 
                 parkings.push({
-                    id: doc.id, name, address, latitude, longitude, email, phone, mobil, rating, votes
+                    id: doc.id, name, address, latitude, longitude, email, phone, mobil, rating, votes, typeParkingCar, typeParkingMotorcycle, typeParkingBike, typeParkingTruck, typeParkingHour, typeParkingRental
                 });
             });
 
@@ -38,7 +71,6 @@ export default function Maps(props) {
 
         });
     }, []);
-
 
     const handleChangeText = (name, value) => {
         setState({ ...state, [name]: value })
@@ -108,6 +140,14 @@ export default function Maps(props) {
     const _map = React.useRef(null);
     const _scrollView = React.useRef(null);
 
+    const [clickButtonCar, setClickCar] = useState(true);
+    const [clickButtonMotorcycle, setClickMotorcycle] = useState(true);
+    const [clickButtonBike, setClickBike] = useState(true);
+    const [clickButtonTruck, setClickTruck] = useState(true);
+    const [clickButtonHour, setClickHour] = useState(true);
+    const [clickButtonRental, setClickRental] = useState(true);
+
+
     return (
         <View style={styles.container}>
             <MapView
@@ -167,30 +207,92 @@ export default function Maps(props) {
                     paddingRight: 20
                 }}
             >
-                <TouchableOpacity style={styles.blockForChild}>
-                    <Image source={require('../../../assets/icon/car.png')} style={styles.chipsIcon} />
-                    <Text style={styles.textBlock}>Car</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.blockForChild}>
-                    <Image source={require('../../../assets/icon/motorcycle.png')} style={styles.chipsIcon} />
-                    <Text style={styles.textBlock}>Motorcycle</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.blockForChild}>
-                    <Image source={require('../../../assets/icon/bike.png')} style={styles.chipsIcon} />
-                    <Text style={styles.textBlock}>Bike</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.blockForChild}>
-                    <Image source={require('../../../assets/icon/truck.png')} style={styles.chipsIcon} />
-                    <Text style={styles.textBlock}>Truck</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.blockForChild}>
-                    <Image source={require('../../../assets/icon/hour.png')} style={styles.chipsIcon} />
-                    <Text style={styles.textBlock}>Hour</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.blockForChild}>
-                    <Image source={require('../../../assets/icon/rental.png')} style={styles.chipsIcon} />
-                    <Text style={styles.textBlock}>Rental</Text>
-                </TouchableOpacity>
+
+
+                {clickButtonCar ?
+                    (
+                        <TouchableOpacity onPress={() => setClickCar(!clickButtonCar)} style={styles.blockForChild}>
+                            <Image source={require('../../../assets/icon/car.png')} style={styles.chipsIcon} />
+                            <Text style={styles.textBlock}>Car</Text>
+                        </TouchableOpacity>
+                    ) :
+                    (
+                        <TouchableOpacity onPress={() => setClickCar(!clickButtonCar)} style={styles.blockForChild2}>
+                            <Image source={require('../../../assets/icon/car2.png')} style={styles.chipsIcon} />
+                            <Text style={styles.textBlock2}>Car</Text>
+                        </TouchableOpacity>
+                    )
+                }
+                {clickButtonMotorcycle ?
+                    (
+                        <TouchableOpacity onPress={() => setClickMotorcycle(!clickButtonMotorcycle)} style={styles.blockForChild}>
+                            <Image source={require('../../../assets/icon/motorcycle.png')} style={styles.chipsIcon} />
+                            <Text style={styles.textBlock}>Motorcycle</Text>
+                        </TouchableOpacity>
+                    ) :
+                    (
+                        <TouchableOpacity onPress={() => setClickMotorcycle(!clickButtonMotorcycle)} style={styles.blockForChild2}>
+                            <Image source={require('../../../assets/icon/motorcycle2.png')} style={styles.chipsIcon} />
+                            <Text style={styles.textBlock2}>Motorcycle</Text>
+                        </TouchableOpacity>
+                    )
+                }
+                {clickButtonBike ?
+                    (
+                        <TouchableOpacity onPress={() => setClickBike(!clickButtonBike)} style={styles.blockForChild}>
+                            <Image source={require('../../../assets/icon/bike.png')} style={styles.chipsIcon} />
+                            <Text style={styles.textBlock}>Bike</Text>
+                        </TouchableOpacity>
+                    ) :
+                    (
+                        <TouchableOpacity onPress={() => setClickBike(!clickButtonBike)} style={styles.blockForChild2}>
+                            <Image source={require('../../../assets/icon/bike2.png')} style={styles.chipsIcon} />
+                            <Text style={styles.textBlock2}>Bike</Text>
+                        </TouchableOpacity>
+                    )
+                }
+                {clickButtonTruck ?
+                    (
+                        <TouchableOpacity onPress={() => setClickTruck(!clickButtonTruck)} style={styles.blockForChild}>
+                            <Image source={require('../../../assets/icon/truck.png')} style={styles.chipsIcon} />
+                            <Text style={styles.textBlock}>Truck</Text>
+                        </TouchableOpacity>
+                    ) :
+                    (
+                        <TouchableOpacity onPress={() => setClickTruck(!clickButtonTruck)} style={styles.blockForChild2}>
+                            <Image source={require('../../../assets/icon/truck2.png')} style={styles.chipsIcon} />
+                            <Text style={styles.textBlock2}>Truck</Text>
+                        </TouchableOpacity>
+                    )
+                }
+                {clickButtonHour ?
+                    (
+                        <TouchableOpacity onPress={() => setClickHour(!clickButtonHour)} style={styles.blockForChild}>
+                            <Image source={require('../../../assets/icon/hour.png')} style={styles.chipsIcon} />
+                            <Text style={styles.textBlock}>Hour</Text>
+                        </TouchableOpacity>
+                    ) :
+                    (
+                        <TouchableOpacity onPress={() => setClickHour(!clickButtonHour)} style={styles.blockForChild2}>
+                            <Image source={require('../../../assets/icon/hour2.png')} style={styles.chipsIcon} />
+                            <Text style={styles.textBlock2}>Hour</Text>
+                        </TouchableOpacity>
+                    )
+                }
+                {clickButtonRental ?
+                    (
+                        <TouchableOpacity onPress={() => setClickRental(!clickButtonRental)} style={styles.blockForChild}>
+                            <Image source={require('../../../assets/icon/rental.png')} style={styles.chipsIcon} />
+                            <Text style={styles.textBlock}>Rental</Text>
+                        </TouchableOpacity>
+                    ) :
+                    (
+                        <TouchableOpacity onPress={() => setClickRental(!clickButtonRental)} style={styles.blockForChild2}>
+                            <Image source={require('../../../assets/icon/rental2.png')} style={styles.chipsIcon} />
+                            <Text style={styles.textBlock2}>Rental</Text>
+                        </TouchableOpacity>
+                    )
+                }
             </ScrollView>
 
             <Animated.ScrollView
@@ -227,6 +329,9 @@ export default function Maps(props) {
             >
                 {
                     parkings.map((parking, index) => {
+
+                        const nameParking = parking.name.charAt(0).toUpperCase() + parking.name.slice(1);
+
                         return (
                             <View style={styles.card} key={index}>
                                 <Image
@@ -234,32 +339,99 @@ export default function Maps(props) {
                                     style={styles.imgCard}
                                     resizeMode="cover"
                                 />
+
                                 <View style={styles.textContent}>
-                                    <Text numberOfLines={1} style={styles.cardTitle}>{parking.name}</Text>
-                                    <View style={styles.startBlock}>
-                                        <StarRating
-                                            disabled={false}
-                                            maxStars={5}
-                                            starSize={14}
-                                            rating={parking.rating}
-                                        // selectedStar={(rating) => onStarRatingPress({
-                                        //     starCount: rating,
-                                        // })}
-                                        />
-                                        <Text style={styles.textStart}>({parking.votes})</Text>
+                                    <Text numberOfLines={1} style={styles.cardTitle}>{nameParking}</Text>
+                                    <View style={styles.blockStartAndIconType}>
+                                        <View>
+                                            <View style={styles.startBlock}>
+                                                <StarRating
+                                                    disabled={false}
+                                                    maxStars={5}
+                                                    starSize={14}
+                                                    rating={parking.rating}
+                                                // selectedStar={(rating) => onStarRatingPress({
+                                                // starCount: rating,
+                                                // })}
+                                                />
+                                                <Text style={styles.textStart}>({parking.votes})</Text>
+                                            </View>
+                                        </View>
+                                        <View style={styles.blockIconTypeParking}>
+                                            <View style={styles.iconType}>
+                                                {parking.typeParkingCar ?
+                                                    (
+                                                        <Image source={require('../../../assets/icon/car.png')} style={styles.chipsIcon} />
+                                                    ) :
+                                                    (
+                                                        null
+                                                    )
+                                                }
+                                            </View>
+                                            <View style={styles.iconType}>
+                                                {parking.typeParkingMotorcycle ?
+                                                    (
+                                                        <Image source={require('../../../assets/icon/motorcycle.png')} style={styles.chipsIcon} />
+                                                    ) :
+                                                    (
+                                                        null
+                                                    )
+                                                }
+                                            </View>
+                                            <View style={styles.iconType}>
+                                                {parking.typeParkingBike ?
+                                                    (
+                                                        <Image source={require('../../../assets/icon/bike.png')} style={styles.chipsIcon} />
+                                                    ) :
+                                                    (
+                                                        null
+                                                    )
+                                                }
+                                            </View>
+                                            <View style={styles.iconType}>
+                                                {parking.typeParkingTruck ?
+                                                    (
+                                                        <Image source={require('../../../assets/icon/truck.png')} style={styles.chipsIcon} />
+                                                    ) :
+                                                    (
+                                                        null
+                                                    )
+                                                }
+                                            </View>
+                                            <View style={styles.iconType}>
+                                                {parking.typeParkingHour ?
+                                                    (
+                                                        <Image source={require('../../../assets/icon/hour.png')} style={styles.chipsIcon} />
+                                                    ) :
+                                                    (
+                                                        null
+                                                    )
+                                                }
+                                            </View>
+                                            <View style={styles.iconType}>
+                                                {parking.typeParkingRental ?
+                                                    (
+                                                        <Image source={require('../../../assets/icon/rental.png')} style={styles.chipsIcon} />
+                                                    ) :
+                                                    (
+                                                        null
+                                                    )
+                                                }
+                                            </View>
+                                        </View>
                                     </View>
+
                                     <Text numberOfLines={1} style={styles.cardDescription}>{parking.address}</Text>
 
                                     <View style={styles.button} >
                                         <TouchableOpacity
-                                            onPress={() => props.root.navigate('Parking')}
+                                            onPress={() => props.root.navigate('Parking', { parking, latitudeUser, longitudeUser })}
                                             style={[styles.signIn, {
                                                 borderColor: '#449ad8',
                                                 borderWidth: 1
                                             }]}
                                         >
                                             <Text style={[styles.textSign, { color: '#449ad8' }]}>
-
                                                 Park
                                             </Text>
 
@@ -299,6 +471,9 @@ const styles = StyleSheet.create({
     textBlock: {
         color: 'black',
     },
+    textBlock2: {
+        color: 'white',
+    },
     block: {
         position: 'absolute',
         top: 65,
@@ -317,6 +492,22 @@ const styles = StyleSheet.create({
         shadowRadius: 5,
         elevation: 10,
         padding: 8,
+    },
+    blockForChild2: {
+        flexDirection: "row",
+        backgroundColor: '#449ad8',
+        borderWidth: 2,
+        borderColor: '#ccc',
+        borderRadius: 20,
+        paddingHorizontal: 20,
+        marginHorizontal: 10,
+        height: 35,
+        shadowColor: '#ccc',
+        shadowOffset: { width: 0, height: 3 },
+        shadowOpacity: 0.5,
+        shadowRadius: 5,
+        elevation: 10,
+        padding: 6,
     },
     chipsIcon: {
         width: 26,
@@ -342,7 +533,8 @@ const styles = StyleSheet.create({
     iconSearch: {
         width: 20,
         height: 20,
-        marginTop: 5
+        marginTop: 5,
+        backgroundColor: 'white'
     },
     card: {
         // padding: 10,
@@ -374,12 +566,16 @@ const styles = StyleSheet.create({
     },
     textContent: {
         flex: 2,
-        padding: 10,
+        paddingTop: 5,
+        paddingLeft: 10,
+        paddingRight: 10,
+        paddingBottom: 10,
     },
     cardTitle: {
         fontSize: 12,
         // marginTop: 5,
         fontWeight: "bold",
+        marginBottom: 10
     },
     cardDescription: {
         fontSize: 12,
@@ -409,5 +605,16 @@ const styles = StyleSheet.create({
     textSign: {
         fontSize: 14,
         fontWeight: 'bold'
+    },
+    blockIconTypeParking: {
+        flexDirection: 'row',
+        marginLeft: 5
+    },
+    blockStartAndIconType: {
+        flexDirection: 'row',
+        width: '100%'
+    },
+    iconType: {
+        marginRight: 2
     }
 });

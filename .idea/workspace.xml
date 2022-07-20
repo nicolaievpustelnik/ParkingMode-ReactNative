@@ -14,11 +14,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="dc5c6b84-1f92-4b26-9bbd-b9134efea109" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.expo-shared/assets.json" beforeDir="false" afterPath="$PROJECT_DIR$/.expo-shared/assets.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/App.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app.json" beforeDir="false" afterPath="$PROJECT_DIR$/app.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/package.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/components/login/Logosmall.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/login/Logosmall.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/admin/register/Registerparking.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/admin/register/Registerparking.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/admin/register/Registerparkingmaps.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/admin/register/Registerparkingmaps.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/pages/maps/Maps.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/maps/Maps.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pages/signup/Signup.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/signup/Signup.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pages/park/Parking.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/pages/park/Parking.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -28,6 +34,14 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
+  <component name="GitSEFilterConfiguration">
+    <file-type-list>
+      <filtered-out-file-type name="LOCAL_BRANCH" />
+      <filtered-out-file-type name="REMOTE_BRANCH" />
+      <filtered-out-file-type name="TAG" />
+      <filtered-out-file-type name="COMMIT_BY_MESSAGE" />
+    </file-type-list>
+  </component>
   <component name="ProjectId" id="1sfq6TUgsmV2G5B0xGFZRgAZVlb" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -36,7 +50,9 @@
   <component name="PropertiesComponent">
     <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.cidr.known.project.marker" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="cidr.known.project.marker" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="preferences.pluginManager" />
   </component>

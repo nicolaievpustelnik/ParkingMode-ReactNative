@@ -1,0 +1,9 @@
+AIzaSyAK07XjwgeorJnPfORYuBJdXZUQKYPAd24
+
+Accessing credentials for nicolaiev in project parkingMode
+Google Certificate Fingerprint:     FB:15:9F:F3:D9:31:EA:89:51:ED:E4:9B:34:F5:F2:75:A5:3E:E9:DF
+Google Certificate Hash (SHA-1):    FB159FF3D931EA8951EDE49B34F5F275A53EE9DF
+Google Certificate Hash (SHA-256):  339AAA462A7EAB7BF8D1D5E02ABFACCD4887750BF4A1DA291869F60991267B27
+Facebook Key Hash:                  +xWf89kx6olR7eSbNPXydaU+6d8=
+
+Note: if you are using Google Play signing, this app will be signed with a different key after publishing to the store, and you'll need to use the hashes displayed in the Google Play console.

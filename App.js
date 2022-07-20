@@ -59,11 +59,16 @@ function Registerparkingmaps({ navigation }) {
   );
 }
 
-function Parking({ navigation }) {
+function Parking({ route, navigation }) {
+
+  const { parking } = route.params;
+  const { latitudeUser } = route.params;
+  const { longitudeUser } = route.params;
+
   return (
     <View style={styles.container}>
       <StatusBar backgroundColor='#006ea8' barStyle="light-content" />
-      <Parking1 root={navigation} />
+      <Parking1 root={navigation} parking={parking} latitudeUser={latitudeUser} longitudeUser={longitudeUser} />
     </View>
   );
 }
@@ -74,13 +79,13 @@ function MyStack() {
   return (
     <Stack.Navigator>
       {/* <Stack.Screen name="Test" component={Test} /> */}
-      <Stack.Screen name="Login" component={Login} />
-      <Stack.Screen name="Signup" component={Signup} />
+      {/* <Stack.Screen name="Login" component={Login} />
+      <Stack.Screen name="Signup" component={Signup} /> */}
       {/* <Stack.Screen name="Select Parking" component={Registerparkingmaps} />
       <Stack.Screen name="Create Parking" component={Registerparking} /> */}
 
-      {/* <Stack.Screen name="Maps" component={Maps} />
-      <Stack.Screen name="Parking" component={Parking} /> */}
+      <Stack.Screen name="Maps" component={Maps} />
+      <Stack.Screen name="Parking" component={Parking} />
 
     </Stack.Navigator>
   );

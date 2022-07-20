@@ -84,12 +84,14 @@ export default function Registerparkingmaps(props) {
 
             </MapView>
 
-            <TouchableOpacity style={styles.buttonNext} onPress={() => props.root.navigate('Create Parking', {
-                coordinate: {
-                    latitude: region.coordinate.latitude,
-                    longitude: region.coordinate.longitude,
-                }
-            })}>
+            <TouchableOpacity style={styles.buttonNext} onPress={() => {
+                region.coordinate.latitude == 0 && region.coordinate.longitude == 0 ? alert("Enter a valid data") : props.root.navigate('Create Parking', {
+                    coordinate: {
+                        latitude: region.coordinate.latitude,
+                        longitude: region.coordinate.longitude,
+                    }
+                })
+            }}>
                 <Image style={styles.imgNext} source={require('../../../../assets/icon/nextWhite.png')} />
             </TouchableOpacity>
 
