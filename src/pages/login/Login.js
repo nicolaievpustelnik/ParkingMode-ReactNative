@@ -4,6 +4,25 @@ import { StyleSheet, View, Text, TextInput, TouchableOpacity } from 'react-nativ
 import Logo from '../../components/login/Logo';
 
 export default function Login(props) {
+
+  const signIn = async () => {
+    try {
+      await GoogleSignin.hasPlayServices();
+      const userInfo = await GoogleSignin.signIn();
+      this.setState({ userInfo });
+    } catch (error) {
+      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
+        // user cancelled the login flow
+      } else if (error.code === statusCodes.IN_PROGRESS) {
+        // operation (e.g. sign in) is in progress already
+      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
+        // play services not available or outdated
+      } else {
+        // some other error happened
+      }
+    }
+  };
+
   return (
     <View style={styles.blockLogin}>
       <Logo />
@@ -11,6 +30,9 @@ export default function Login(props) {
       <TextInput style={styles.inputLogin} underlineColorAndroid='rgba(0,0,0,0)' placeholder='Password' secureTextEntry={true} placeholderTextColor='#000000' />
       <TouchableOpacity style={styles.buttonLogin}>
         <Text style={styles.buttonText}>Login</Text>
+      </TouchableOpacity>
+      <TouchableOpacity>
+        <Text style={styles.buttonText}>Google</Text>
       </TouchableOpacity>
       <View style={styles.signUpTextLogin}>
         <Text style={styles.signUpText}>Don't have an account yet?</Text>
