@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import MapView, { Callout, Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import MapView, { Callout, Marker } from 'react-native-maps';
 import { StyleSheet, View, Text, TextInput, TouchableOpacity, ScrollView, ActivityIndicator, Dimensions, Image, Platform, Linking } from 'react-native';
 import { GooglePlacesAutocomplete } from 'react-native-google-places-autocomplete';
-import StarRating from 'react-native-star-rating';
+import StarRating from '../../components/StarRating';
 import * as Location from 'expo-location';
 import Constants from 'expo-constants';
-import { render } from 'react-dom';
 import MapViewDirections from 'react-native-maps-directions';
 
 
@@ -63,7 +62,6 @@ export default function Parking(props) {
                 <MapView
                     style={styles.blockLocation}
                     initialRegion={region}
-                    provider={PROVIDER_GOOGLE}
                 >
                     <Marker coordinate={region}>
                         <Image

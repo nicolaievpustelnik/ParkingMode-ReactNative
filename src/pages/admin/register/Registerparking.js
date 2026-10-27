@@ -21,7 +21,7 @@ export default function Registerparking(props) {
     })
 
     const handleChangeText = (name, value) => {
-        setState({ ...state, [name]: value })
+        setState(prev => ({ ...prev, [name]: value }))
     }
 
     const createNewParking = async () => {

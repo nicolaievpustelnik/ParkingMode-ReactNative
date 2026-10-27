@@ -5,11 +5,6 @@
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
     "updates": {
       "fallbackToCacheTimeout": 0
     },
@@ -18,7 +13,10 @@
     ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.parkingmode"
+      "bundleIdentifier": "com.parkingmode",
+      "infoPlist": {
+        "NSLocationWhenInUseUsageDescription": "ParkingMode uses your location to show nearby parking lots and routes."
+      }
     },
     "android": {
       "package": "com.parkingmode",
@@ -43,6 +41,22 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "description": ""
+    "description": "",
+    "plugins": [
+      [
+        "expo-splash-screen",
+        {
+          "image": "./assets/splash.png",
+          "resizeMode": "contain",
+          "backgroundColor": "#ffffff"
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "ParkingMode uses your location to show nearby parking lots and routes."
+        }
+      ]
+    ]
   }
 }

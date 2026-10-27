@@ -1,9 +1,8 @@
-import React, { useEffect, useState, setState } from 'react';
-import MapView, { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import React, { useEffect, useState } from 'react';
+import MapView, { Marker } from 'react-native-maps';
 import { StyleSheet, View, Dimensions, Image, ScrollView, TouchableOpacity, Text, TextInput, Animated, Platform } from 'react-native';
 import firebase from '../../../database/firebase';
-import StarRating from 'react-native-star-rating';
-import Constants from 'expo-constants';
+import StarRating from '../../components/StarRating';
 import * as Location from 'expo-location';
 
 const { width, height } = Dimensions.get("window");
@@ -28,12 +27,6 @@ export default function Maps(props) {
 
     useEffect(() => {
         (async () => {
-            if (Platform.OS === 'android' && !Constants.isDevice) {
-                setErrorMsg(
-                    'Oops, this will not work on Snack in an Android emulator. Try it on your device!'
-                );
-                return;
-            }
             let { status } = await Location.requestForegroundPermissionsAsync();
             if (status !== 'granted') {
                 setErrorMsg('Permission to access location was denied');
@@ -56,7 +49,7 @@ export default function Maps(props) {
     }
 
     useEffect(() => {
-        firebase.db.collection('parking').onSnapshot(querySnapshot => {
+        return firebase.db.collection('parking').onSnapshot(querySnapshot => {
 
             const parkings = [];
 
@@ -72,10 +65,6 @@ export default function Maps(props) {
         });
 
     }, []);
-
-    const handleChangeText = (name, value) => {
-        setState({ ...state, [name]: value })
-    }
 
     const [constructor, onStarRatingPress] = React.useState({
         starCount: 3.5
@@ -302,7 +291,6 @@ export default function Maps(props) {
             <MapView
                 ref={_map}
                 initialRegion={region}
-                provider={PROVIDER_GOOGLE}
                 style={styles.map}
             >
 

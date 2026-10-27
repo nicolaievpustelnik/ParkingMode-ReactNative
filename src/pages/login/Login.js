@@ -1,38 +1,40 @@
-import React from 'react';
-import { StyleSheet, View, Text, TextInput, TouchableOpacity } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, View, Text, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
 
 import Logo from '../../components/login/Logo';
+import { auth } from '../../../database/firebase';
 
 export default function Login(props) {
 
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [loader, setLoader] = useState(false);
+
   const signIn = async () => {
+    if (email.trim() == '' || password == '') {
+      alert('Enter your email and password');
+      return;
+    }
+
+    setLoader(true);
     try {
-      await GoogleSignin.hasPlayServices();
-      const userInfo = await GoogleSignin.signIn();
-      this.setState({ userInfo });
+      await auth.signInWithEmailAndPassword(email.trim(), password);
+      props.root.navigate('Maps');
     } catch (error) {
-      if (error.code === statusCodes.SIGN_IN_CANCELLED) {
-        // user cancelled the login flow
-      } else if (error.code === statusCodes.IN_PROGRESS) {
-        // operation (e.g. sign in) is in progress already
-      } else if (error.code === statusCodes.PLAY_SERVICES_NOT_AVAILABLE) {
-        // play services not available or outdated
-      } else {
-        // some other error happened
-      }
+      alert(error.message);
+    } finally {
+      setLoader(false);
     }
   };
 
   return (
     <View style={styles.blockLogin}>
       <Logo />
-      <TextInput style={styles.inputLogin} underlineColorAndroid='rgba(0,0,0,0)' placeholder='Email' placeholderTextColor='#000000' />
-      <TextInput style={styles.inputLogin} underlineColorAndroid='rgba(0,0,0,0)' placeholder='Password' secureTextEntry={true} placeholderTextColor='#000000' />
-      <TouchableOpacity style={styles.buttonLogin}>
+      <ActivityIndicator size="large" color="#006ea8" animating={loader} />
+      <TextInput style={styles.inputLogin} underlineColorAndroid='rgba(0,0,0,0)' placeholder='Email' placeholderTextColor='#000000' autoCapitalize='none' keyboardType='email-address' onChangeText={setEmail} />
+      <TextInput style={styles.inputLogin} underlineColorAndroid='rgba(0,0,0,0)' placeholder='Password' secureTextEntry={true} placeholderTextColor='#000000' onChangeText={setPassword} />
+      <TouchableOpacity style={styles.buttonLogin} onPress={signIn}>
         <Text style={styles.buttonText}>Login</Text>
-      </TouchableOpacity>
-      <TouchableOpacity>
-        <Text style={styles.buttonText}>Google</Text>
       </TouchableOpacity>
       <View style={styles.signUpTextLogin}>
         <Text style={styles.signUpText}>Don't have an account yet?</Text>

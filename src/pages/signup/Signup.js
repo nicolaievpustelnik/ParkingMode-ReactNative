@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { StyleSheet, View, Text, TextInput, TouchableOpacity, ScrollView, ActivityIndicator } from 'react-native';
 
 import Logosmall from '../../components/login/Logosmall';
-import firebase from '../../../database/firebase';
+import { auth, db } from '../../../database/firebase';
 
 export default function Signup(props) {
 
@@ -16,14 +16,18 @@ export default function Signup(props) {
     })
 
     const handleChangeText = (name, value) => {
-        setState({ ...state, [name]: value })
+        setState(prev => ({ ...prev, [name]: value }))
     }
 
 
     const createNewUser = async () => {
-        if (state.firstName == "") {
+        if (state.firstName == "" || state.email == "" || state.password == "") {
 
             alert('There is a blank field');
+
+        } else if (state.password !== state.passwordConfirm) {
+
+            alert('Passwords do not match');
 
         } else {
 
@@ -31,21 +35,20 @@ export default function Signup(props) {
 
             try {
 
-                await firebase.db.collection('users').add({
+                const { user } = await auth.createUserWithEmailAndPassword(state.email.trim(), state.password);
+
+                await db.collection('users').doc(user.uid).set({
                     firstName: state.firstName,
                     lastName: state.lastName,
-                    email: state.email,
-                    password: state.password
+                    email: state.email.trim()
                 });
-
-                setTimeout(() => {
-                    handleChangeText("loader", false);
-                }, 1000)
 
                 props.root.navigate('Maps');
 
             } catch (error) {
-                console.log(error);
+                alert(error.message);
+            } finally {
+                setState(prev => ({ ...prev, loader: false }));
             }
 
         }
@@ -59,7 +62,7 @@ export default function Signup(props) {
 
                 <TextInput placeholder='First Name' onChangeText={(value => handleChangeText('firstName', value))} style={styles.inputLogin} underlineColorAndroid='rgba(0,0,0,0)' placeholderTextColor='#000000' />
                 <TextInput placeholder='Last Name' onChangeText={(value => handleChangeText('lastName', value))} style={styles.inputLogin} underlineColorAndroid='rgba(0,0,0,0)' placeholderTextColor='#000000' />
-                <TextInput placeholder='Email' onChangeText={(value => handleChangeText('email', value))} style={styles.inputLogin} underlineColorAndroid='rgba(0,0,0,0)' placeholderTextColor='#000000' />
+                <TextInput placeholder='Email' onChangeText={(value => handleChangeText('email', value))} style={styles.inputLogin} underlineColorAndroid='rgba(0,0,0,0)' placeholderTextColor='#000000' autoCapitalize='none' keyboardType='email-address' />
                 <TextInput placeholder='Password' onChangeText={(value => handleChangeText('password', value))} style={styles.inputLogin} underlineColorAndroid='rgba(0,0,0,0)' secureTextEntry={true} placeholderTextColor='#000000' />
                 <TextInput placeholder='Confirm Password' onChangeText={(value => handleChangeText('passwordConfirm', value))} style={styles.inputLogin} underlineColorAndroid='rgba(0,0,0,0)' secureTextEntry={true} placeholderTextColor='#000000' />
 

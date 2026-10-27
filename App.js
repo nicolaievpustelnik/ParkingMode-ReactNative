@@ -1,6 +1,7 @@
+import 'react-native-gesture-handler';
 import * as React from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
@@ -14,7 +15,7 @@ import Parking1 from './src/pages/park/Parking';
 function Login({ navigation }) {
   return (
     <View style={styles.container}>
-      <StatusBar backgroundColor='#006ea8' barStyle="light-content" />
+      <StatusBar style="light" />
       <Login1 root={navigation} />
     </View>
   );
@@ -23,7 +24,7 @@ function Login({ navigation }) {
 function Signup({ navigation }) {
   return (
     <View style={styles.container}>
-      <StatusBar backgroundColor='#006ea8' barStyle="light-content" />
+      <StatusBar style="light" />
       <Signup1 root={navigation} />
     </View>
   );
@@ -32,7 +33,7 @@ function Signup({ navigation }) {
 function Maps({ navigation }) {
   return (
     <View style={styles.container}>
-      <StatusBar backgroundColor='#006ea8' barStyle="light-content" />
+      <StatusBar style="light" />
       <Maps1 root={navigation} />
     </View>
   );
@@ -44,7 +45,7 @@ function Registerparking({ route, navigation }) {
 
   return (
     <View style={styles.container}>
-      <StatusBar backgroundColor='#006ea8' barStyle="light-content" />
+      <StatusBar style="light" />
       <Registerparking1 root={navigation} latitude={latitude} longitude={longitude} />
     </View>
   );
@@ -53,7 +54,7 @@ function Registerparking({ route, navigation }) {
 function Registerparkingmaps({ navigation }) {
   return (
     <View style={styles.container}>
-      <StatusBar backgroundColor='#006ea8' barStyle="light-content" />
+      <StatusBar style="light" />
       <Registerparkingmaps1 root={navigation} />
     </View>
   );
@@ -67,7 +68,7 @@ function Parking({ route, navigation }) {
 
   return (
     <View style={styles.container}>
-      <StatusBar backgroundColor='#006ea8' barStyle="light-content" />
+      <StatusBar style="light" />
       <Parking1 root={navigation} parking={parking} latitudeUser={latitudeUser} longitudeUser={longitudeUser} />
     </View>
   );
@@ -77,16 +78,25 @@ const Stack = createStackNavigator();
 
 function MyStack() {
   return (
-    <Stack.Navigator>
-      {/* <Stack.Screen name="Test" component={Test} /> */}
+    <Stack.Navigator initialRouteName="Login">
       <Stack.Screen name="Login" component={Login} />
-      {/* <Stack.Screen name="Signup" component={Signup} /> */}
-      {/* <Stack.Screen name="Select Parking" component={Registerparkingmaps} />
-      <Stack.Screen name="Create Parking" component={Registerparking} /> */}
-
-      {/* <Stack.Screen name="Maps" component={Maps} />
-      <Stack.Screen name="Parking" component={Parking} /> */}
-
+      <Stack.Screen name="Signup" component={Signup} />
+      <Stack.Screen
+        name="Maps"
+        component={Maps}
+        options={({ navigation }) => ({
+          headerLeft: () => null,
+          gestureEnabled: false,
+          headerRight: () => (
+            <TouchableOpacity onPress={() => navigation.navigate('Select Parking')} style={{ paddingHorizontal: 16 }}>
+              <Text style={styles.signUpButton}>+ Add parking</Text>
+            </TouchableOpacity>
+          ),
+        })}
+      />
+      <Stack.Screen name="Parking" component={Parking} />
+      <Stack.Screen name="Select Parking" component={Registerparkingmaps} />
+      <Stack.Screen name="Create Parking" component={Registerparking} />
     </Stack.Navigator>
   );
 }
